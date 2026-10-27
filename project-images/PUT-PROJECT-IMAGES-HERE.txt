@@ -1,0 +1,2 @@
+Put project screenshots and architecture images here.
+Use paths like project-images/dashboard.png in src/data.js.

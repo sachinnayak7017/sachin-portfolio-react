@@ -1,0 +1,2 @@
+Put Sachin-Kumar-Resume.pdf and downloadable notes/PDFs in this folder.
+Then update the matching url in src/data.js.
