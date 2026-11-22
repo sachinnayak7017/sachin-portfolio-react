@@ -2,3 +2,9 @@ node_modules
 dist
 .DS_Store
 *.log
+
+# IntelliJ files
+.idea/
+
+# Large project videos
+public/project-videos/*.mp4

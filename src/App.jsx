@@ -1,45 +1,623 @@
-import React,{useMemo,useState} from 'react';
-import {motion} from 'framer-motion';
-// import {Award,CheckCircle2,Code2,Download,ExternalLink,GitHub,Image,Linkedin,Mail,MapPin,Menu,Phone,Play,Search,Server,ShieldCheck,TerminalSquare,Video,X} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Award, CheckCircle2, Code2, Download, ExternalLink, Image,
-  Mail, MapPin, Menu, Phone, Play, Search, Server,
-  ShieldCheck, TerminalSquare, Video, X
+  Award, BookOpen, CheckCircle2, Code2, ExternalLink, Mail,
+  MapPin, Menu, Play, Search, ShieldCheck, X
 } from 'lucide-react';
-import {skills,projects,resources,profiles,credentials} from './data.js';
+import {
+  achievements, credentials, education, experiences, internships,
+  profiles, projects, resources, skills
+} from './data.js';
 
-const nav=['About','Experience','Skills','Projects','Resources','Profiles','Credentials','Education','Contact'];
-const buildPoints=['Build scalable backend services with clear API and data boundaries','Design secure role-based workflows for customers, admins and partner systems','Design event-driven flows with retries, idempotency and recoverable failures','Investigate production issues through logs, SQL, mappings and integrations','Solve product problems with maintainable, testable backend components'];
+const navItems = [
+  ['About', 'about'],
+  ['Impact', 'achievements'],
+  ['Experience', 'experience'],
+  ['Skills', 'skills'],
+  ['Projects', 'projects'],
+  ['Education', 'education'],
+  ['Contact', 'contact']
+];
 
-export default function App(){
- const[menu,setMenu]=useState(false),[pq,setPq]=useState(''),[pf,setPf]=useState('All'),[rq,setRq]=useState(''),[rf,setRf]=useState('All');
- const pTypes=['All',...new Set(projects.map(p=>p.category))],rTypes=['All',...new Set(resources.map(r=>r.type))];
- const shownProjects=useMemo(()=>projects.filter(p=>(pf==='All'||p.category===pf)&&`${p.title} ${p.tags}`.toLowerCase().includes(pq.toLowerCase())),[pf,pq]);
- const shownResources=useMemo(()=>resources.filter(r=>(rf==='All'||r.type===rf)&&`${r.title} ${r.description}`.toLowerCase().includes(rq.toLowerCase())),[rf,rq]);
- const go=id=>{document.getElementById(id.toLowerCase())?.scrollIntoView({behavior:'smooth'});setMenu(false)};
- return <main>
-  <header><button className="brand" onClick={()=>go('home')}>Sachin Kumar<span>.</span></button><nav>{nav.map(n=><button key={n} onClick={()=>go(n)}>{n}</button>)}</nav><a className="btn primary topResume" href={`${import.meta.env.BASE_URL}resources/Sachin-Kumar-Resume.pdf`} download><Download size={15}/>Resume</a><button className="hamb" onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button>{menu&&<div className="mobile">{nav.map(n=><button key={n} onClick={()=>go(n)}>{n}</button>)}</div>}</header>
-  <section id="home" className="hero"><motion.div initial={{opacity:0,y:18}} animate={{opacity:1,y:0}}><div className="available">● Open to backend engineering opportunities</div><p className="cyan">Hello, I'm Sachin Kumar</p><h1>I engineer backend systems that are <em>secure, scalable and dependable.</em></h1><p className="lead">Java Backend Developer building enterprise APIs for digital banking and ERP platforms with a focus on clean architecture, reliable integrations and production problem solving.</p><div className="actions"><button className="btn primary" onClick={()=>go('projects')}>Explore projects ↗</button><button className="btn" onClick={()=>go('resources')}><Download size={18}/>Resume & resources</button></div></motion.div><EngineeringProfile/></section>
-  <Section id="about" eye="About me" title="What I build"><div className="buildPoints">{buildPoints.map(x=><div key={x}><CheckCircle2/>{x}</div>)}</div></Section>
-  <Section id="experience" eye="Experience" title="Impact through situation, action and result."><Experience role="System Engineer / Backend Java Developer" company="Shivalik Small Finance Bank (SSFB)" period="Nov 2025 - Present" situation="Digital banking channels required secure and dependable APIs across partner and internal systems." actions={['Engineered and deployed 50+ REST APIs for banking flows','Implemented Spring Security, JWT, OAuth 2.0 and RBAC','Investigated database, mapping and integration issues through root-cause analysis']} result="Improved consistency, maintainability and operational reliability across business-critical integration flows."/><Experience role="Technical Consultant" company="CorporateServe Solutions Pvt. Ltd." period="Jan 2025 - Oct 2025" situation="Academic and administrative operations required centralized ERP workflows and dependable reporting." actions={['Built logic, reports and integrations with Business Central, AL and RDLC','Translated stakeholder needs into academic and fee-management workflows','Resolved go-live and post-deployment issues']} result="Helped deliver more structured ERP processes and smoother operational adoption."/></Section>
-  <Section id="skills" eye="Technical toolkit" title="Resume-aligned skills."><div className="grid3">{Object.entries(skills).map(([k,v])=><Card key={k} title={k}>{v.map(s=><span key={s} className="tag">{s}</span>)}</Card>)}</div></Section>
-  <Section id="projects" eye="Projects" title="Work explained with the STAR structure."><Controls value={pq} setValue={setPq} items={pTypes} active={pf} setActive={setPf}/><div className="stack">{shownProjects.map(p=><Project key={p.title} p={p}/>)}</div></Section>
-  <Section id="resources" eye="Resource library" title="Download notes, sheets, PDFs and learning resources."><Controls value={rq} setValue={setRq} items={rTypes} active={rf} setActive={setRf}/><div className="grid3">{shownResources.map(r=><Resource key={r.title} r={r}/>)}</div></Section>
-  <Section id="profiles" eye="Coding profiles" title="Engineering and learning profiles."><div className="grid4">{profiles.map(p=><ProfileLink key={p.name} p={p}/>)}</div></Section>
-  <Section id="credentials" eye="Credentials & evidence" title="Certificates, achievements and proof of work."><div className="grid3">{credentials.map(c=><Credential key={c.title} c={c}/>)}</div></Section>
-  <Section id="education" eye="Education" title="Academic foundation."><Card title="B.Tech in Computer Science & Engineering"><p className="cyan">Shobhit University</p><p>Sep 2021 - Jun 2025 · CGPA 7.8/10</p><p>Foundation in DSA, OOP, DBMS, operating systems, computer networks and software engineering.</p></Card></Section>
-  <section id="contact" className="contact"><p className="cyan">READY FOR MEANINGFUL BACKEND CHALLENGES</p><h2>Building reliable systems for products that need to scale.</h2><p>Open to Java backend roles where system design, security, ownership and measurable product impact matter.</p><div className="actions center"><a className="btn primary" href="mailto:sachinnayak7017@gmail.com"><Mail/>Email</a><a className="btn" href="tel:+917017253361"><Phone/>Call</a><a className="btn" href="https://www.linkedin.com/in/sachin-kumar-860541286/" target="_blank" rel="noreferrer"><ExternalLink /> LinkedIn</a></div><p className="location"><MapPin size={16}/>Noida, Uttar Pradesh, India · Open to relocation</p></section>
-  <footer>© 2026 Sachin Kumar · Java · Spring Boot · Backend Systems</footer>
- </main>
+const assetUrl = (path) => {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  return import.meta.env.BASE_URL + path.replace(/^\//, '');
+};
+
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('All');
+  const shownProjects = projects.filter((project) => project.published !== false);
+  const categories = ['All', ...new Set(shownProjects.map((project) => project.category))];
+  const filteredProjects = useMemo(() => shownProjects.filter((project) => {
+    const searchable = [project.title, project.subtitle, project.situation, ...(project.tags || [])]
+      .join(' ').toLowerCase();
+    return (
+      (category === 'All' || project.category === category) &&
+      searchable.includes(query.trim().toLowerCase())
+    );
+  }), [query, category]);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMenuOpen(false);
+  };
+
+  return (
+    <main>
+      <header>
+        <button className="brand" onClick={() => scrollTo('home')}>
+          Sachin Kumar<span>.</span>
+        </button>
+        <nav>
+          {navItems.map(([label, id]) => (
+            <button key={id} onClick={() => scrollTo(id)}>{label}</button>
+          ))}
+        </nav>
+        <a className="btn primary topResume" href="mailto:sachinnayak7017@gmail.com">
+          <Mail size={16} /> Contact
+        </a>
+        <button
+          className="hamb"
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+        {menuOpen && (
+          <div className="mobile">
+            {navItems.map(([label, id]) => (
+              <button key={id} onClick={() => scrollTo(id)}>{label}</button>
+            ))}
+          </div>
+        )}
+      </header>
+
+      <section id="home" className="hero">
+        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
+          <div className="available">● Open to Java Backend Roles</div>
+          <p className="cyan">Hi, I'm Sachin Kumar</p>
+          <h1>
+            Java Backend Engineer building{' '}
+            <em>secure, scalable, production-grade systems.</em>
+          </h1>
+          <p className="lead">
+            I ship production APIs and modernize backend integrations — turning legacy
+            workflows into fast, reliable Java microservices. Currently engineering
+            digital banking systems at Shivalik Small Finance Bank.
+          </p>
+          <div className="heroKeywords">
+            <span>Java</span>
+            <span>Spring Boot</span>
+            <span>Microservices</span>
+            <span>System Design</span>
+            <span>DSA</span>
+            <span>Kafka</span>
+            <span>Redis</span>
+          </div>
+          <div className="actions">
+            <button className="btn primary" onClick={() => scrollTo('projects')}>
+              View Engineering Work ↗
+            </button>
+            <button className="btn" onClick={() => scrollTo('experience')}>
+              View Experience
+            </button>
+          </div>
+          <div className="heroStats">
+            <div><strong>50+</strong><span>APIs shipped</span></div>
+            <div><strong>100+</strong><span>APIs migrated</span></div>
+            <div><strong>75–85%</strong><span>Latency cut</span></div>
+            <div><strong>60–70%</strong><span>Throughput gain</span></div>
+          </div>
+        </motion.div>
+        <EngineeringSnapshot />
+      </section>
+
+      <Section
+        id="about"
+        eye="Professional Summary"
+        title="Backend engineer focused on measurable impact."
+      >
+        <div className="aboutLayout">
+          <div className="aboutCopy">
+            <p>
+              I'm a Java Backend Engineer with production experience in digital banking
+              and enterprise application development. I've independently delivered 50+
+              banking APIs, migrated 100+ legacy integrations to Java microservices, and
+              owned critical backend modules end-to-end.
+            </p>
+            <p>
+              My focus areas are backend architecture, API performance, security,
+              concurrency, and data consistency — grounded in strong CS fundamentals
+              (DSA, DBMS, OS, CN) and practical system design.
+            </p>
+            <p className="learningNote">
+              Currently exploring Generative AI and AI-powered application development.
+            </p>
+          </div>
+          <div className="proofPoints">
+            <ProofPoint
+              title="Modernization"
+              text="Migrating legacy integration workloads to maintainable Java microservices."
+            />
+            <ProofPoint
+              title="Performance"
+              text="Reducing API response times and improving traffic-handling capacity."
+            />
+            <ProofPoint
+              title="Security"
+              text="Implementing encryption/decryption and secure partner integrations."
+            />
+            <ProofPoint
+              title="Ownership"
+              text="Taking modules from design through integration, deployment, and production support."
+            />
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        id="achievements"
+        eye="Engineering Impact"
+        title="Production outcomes, backed by metrics."
+      >
+        <div className="achievementGrid">
+          {achievements.map((item) => (
+            <article className="achievement" key={item.label}>
+              <strong>{item.value}</strong>
+              <b>{item.label}</b>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </div>
+        <p className="metricNote">
+          Metrics reflect reported production outcomes. Detailed before/after
+          benchmarks are available on request.
+        </p>
+      </Section>
+
+      <Section
+        id="experience"
+        eye="Professional Experience"
+        title="Production ownership. Backend modernization. Delivery."
+      >
+        {experiences.map((item) => (
+          <ExperienceCard key={item.company} item={item} />
+        ))}
+      </Section>
+
+      <Section
+        id="internships"
+        eye="Early Career"
+        title="Internships and practical development experience."
+      >
+        <div className="internshipGrid">
+          {internships.map((item) => (
+            <InternshipCard key={item.company} item={item} />
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        id="skills"
+        eye="Technical Capabilities"
+        title="Backend engineering, system thinking, and CS fundamentals."
+      >
+        <div className="grid3">
+          {Object.entries(skills).map(([group, values]) => (
+            <article className="card" key={group}>
+              <h3>{group}</h3>
+              <div>
+                {values.map((value) => (
+                  <span className="tag" key={value}>{value}</span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+        <p className="metricNote">
+          Generative AI is listed as a current learning area, not as professional
+          production experience.
+        </p>
+      </Section>
+
+      <Section
+        id="projects"
+        eye="Selected Engineering Work"
+        title="Projects explained through problem, implementation, and outcome."
+      >
+        <ProjectControls
+          query={query}
+          setQuery={setQuery}
+          categories={categories}
+          active={category}
+          setActive={setCategory}
+        />
+        <div className="stack">
+          {filteredProjects.map((project) => (
+            <ProjectCard key={project.title} project={project} />
+          ))}
+          {filteredProjects.length === 0 && (
+            <p className="emptyState">No projects match this search.</p>
+          )}
+        </div>
+      </Section>
+
+      <Section
+        id="education"
+        eye="Academic Foundation"
+        title="Computer science fundamentals."
+      >
+        <article className="card educationCard">
+          <div>
+            <p className="cyan">{education.period}</p>
+            <h3>{education.degree}</h3>
+            <p>{education.institution}</p>
+            <strong>{education.result}</strong>
+          </div>
+          <div>
+            <b>Relevant coursework</b>
+            <div>
+              {education.coursework.map((item) => (
+                <span className="tag" key={item}>{item}</span>
+              ))}
+            </div>
+          </div>
+        </article>
+      </Section>
+
+      <Section
+        id="profiles"
+        eye="Developer Profiles"
+        title="Code, learning, and professional network."
+      >
+        <div className="grid4">
+          {profiles.map((profile) => (
+            <a
+              className="card profileLink"
+              href={profile.url}
+              target="_blank"
+              rel="noreferrer"
+              key={profile.name}
+            >
+              <h3>{profile.name}</h3>
+              <p>{profile.description}</p>
+              <span className="inlineLink">
+                Open profile <ExternalLink size={14} />
+              </span>
+            </a>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        id="credentials"
+        eye="Recognition"
+        title="Achievements and credentials."
+      >
+        <div className="grid3">
+          {credentials.map((credential) => (
+            <CredentialCard key={credential.title} credential={credential} />
+          ))}
+        </div>
+      </Section>
+
+      {resources.length > 0 && (
+        <Section
+          id="resources"
+          eye="Resources"
+          title="Technical notes and downloadable material."
+        >
+          <div className="grid3">
+            {resources.map((resource) => (
+              <ResourceCard key={resource.title} resource={resource} />
+            ))}
+          </div>
+        </Section>
+      )}
+
+      <section id="contact" className="contact">
+        <p className="cyan">OPEN TO JAVA BACKEND ENGINEER ROLES</p>
+        <h2>Let's build dependable backend systems together.</h2>
+        <p>
+          Targeting Java Backend Engineer and Backend Developer roles at product-based
+          companies — focused on APIs, microservices, system reliability, and
+          engineering ownership.
+        </p>
+        <div className="actions center">
+          <a className="btn primary" href="mailto:sachinnayak7017@gmail.com">
+            <Mail /> Email
+          </a>
+          <a
+            className="btn"
+            href="https://www.linkedin.com/in/sachin-kumar-860541286/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <ExternalLink /> LinkedIn
+          </a>
+          <a
+            className="btn"
+            href="https://github.com/sachinnayak7017"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Code2 /> GitHub
+          </a>
+        </div>
+        <p className="location">
+          <MapPin size={16} /> Noida, Uttar Pradesh, India · Open to opportunities
+        </p>
+      </section>
+
+      <footer>
+        © {new Date().getFullYear()} Sachin Kumar · Java Backend Engineering · Built with React
+      </footer>
+    </main>
+  );
 }
 
-function EngineeringProfile(){const items=[['Security-driven APIs','Protected workflows, role-based access and safe partner integrations',ShieldCheck],['Failure-ready design','Retries, idempotency and predictable unhappy paths',CheckCircle2],['Production diagnostics','Root-cause analysis across logs, SQL, mappings and services',TerminalSquare],['Product-focused architecture','Maintainable services around real users and business rules',Server]];return <motion.aside initial={{opacity:0,scale:.95}} animate={{opacity:1,scale:1}} className="profile"><small>ENGINEERING PROFILE</small><h2>Engineering systems around real product constraints.</h2><p>I connect business flows, secure implementation and production behaviour to build backend systems teams can trust.</p><div className="grid2">{items.map(([t,x,I])=><div key={t} className="mini"><I/><b>{t}</b><p>{x}</p></div>)}</div><div className="grid2 stats">{[['1.5+','Years experience'],['50+','REST APIs delivered'],['10+','Projects portfolio'],['3','Business domains']].map(x=><div key={x[1]}><strong>{x[0]}</strong><small>{x[1]}</small></div>)}</div></motion.aside>}
-function Section({id,eye,title,children}){return <section id={id} className="section"><p className="eye">{eye}</p><h2>{title}</h2>{children}</section>}
-function Card({title,children}){return <article className="card"><h3>{title}</h3>{children}</article>}
-function Block({name,children}){return <div className="block"><b>{name}</b><p>{children}</p></div>}
-function Experience(p){return <article className="experience"><div><h3>{p.role}</h3><p className="cyan">{p.company}</p><small>{p.period}</small></div><div><Block name="SITUATION">{p.situation}</Block><div className="block"><b>ACTION</b>{p.actions.map(x=><p key={x}>✓ {x}</p>)}</div><Block name="RESULT">{p.result}</Block></div></article>}
-function Controls({value,setValue,items,active,setActive}){return <div className="controls"><label><Search/><input value={value} onChange={e=>setValue(e.target.value)} placeholder="Search..."/></label><div>{items.map(x=><button key={x} className={active===x?'on':''} onClick={()=>setActive(x)}>{x}</button>)}</div></div>}
-function Project({p}){return <article className="project"><div className="projectHead"><div><h3>{p.title}</h3><p className="cyan">{p.subtitle}</p></div><a className="btn" href={p.github} target="_blank" rel="noreferrer"><Code2 /> GitHub</a></div><div className="projectBody"><div><Block name="SITUATION">{p.situation}</Block><Block name="TASK">{p.task}</Block><div className="block"><b>ACTION</b>{p.actions.map(x=><p key={x}>✓ {x}</p>)}</div><Block name="RESULT">{p.result}</Block></div><div className="media"><div>{p.images.length?<img src={`${import.meta.env.BASE_URL}${p.images[0]}`} alt={`${p.title} screenshot`}/>:<><Image/><b>Project images</b></>}</div><div>{p.video?<a href={p.video} target="_blank" rel="noreferrer"><Play/>Watch demo</a>:<><Video/><b>Demo video</b></>}</div></div></div><div>{p.tags.map(t=><span key={t} className="tag">{t}</span>)}</div></article>}
-function Resource({r}){return <Card title={r.title}><p>{r.description}</p><small>{r.format}</small><div className="resourceAction">{r.url?<a className="btn primary" href={r.url.startsWith('http')?r.url:`${import.meta.env.BASE_URL}${r.url}`} target="_blank" rel="noreferrer" download={r.downloadable||undefined}>{r.downloadable?<Download/>:<ExternalLink/>}{r.downloadable?'Download':'Open'}</a>:<span className="btn disabled"><Download/>Download pending</span>}</div></Card>}
-function ProfileLink({p}){return p.url?<a className="card profileLink" href={p.url} target="_blank" rel="noreferrer"><h3>{p.name}</h3><p>Open profile</p><ExternalLink/></a>:<article className="card disabled"><h3>{p.name}</h3><p>Link pending</p></article>}
-function Credential({c}){return <article className="credential">{c.image?<img src={`${import.meta.env.BASE_URL}${c.image}`} alt={c.title}/>:<div className="certImg"><Award/><span>Certificate image</span></div>}<div><small>Credential</small><h3>{c.title}</h3><p>{c.issuer}</p>{c.url?<a href={c.url} target="_blank" rel="noreferrer">Verify credential</a>:<span>Verification link pending</span>}</div></article>}
+function EngineeringSnapshot() {
+  return (
+    <motion.aside
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="profile"
+    >
+      <small>ENGINEERING SNAPSHOT</small>
+      <h2>From legacy integration to production-ready Java services.</h2>
+      <p>
+        Backend development, modernization, performance, and security across
+        enterprise workflows.
+      </p>
+      <div className="snapshotList">
+        <div>
+          <ShieldCheck />
+          <span>
+            <b>Security ownership</b>
+            <small>Encryption, decryption, and partner integrations</small>
+          </span>
+        </div>
+        <div>
+          <Code2 />
+          <span>
+            <b>API engineering</b>
+            <small>New API delivery and legacy API migration</small>
+          </span>
+        </div>
+        <div>
+          <BookOpen />
+          <span>
+            <b>System thinking</b>
+            <small>DSA, DBMS, OS, CN, and system design</small>
+          </span>
+        </div>
+      </div>
+    </motion.aside>
+  );
+}
+
+function Section({ id, eye, title, children }) {
+  return (
+    <section id={id} className="section">
+      <p className="eye">{eye}</p>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function ProofPoint({ title, text }) {
+  return (
+    <article className="proofPoint">
+      <CheckCircle2 />
+      <div>
+        <b>{title}</b>
+        <p>{text}</p>
+      </div>
+    </article>
+  );
+}
+
+function ExperienceCard({ item }) {
+  return (
+    <article className="experience">
+      <div className="experienceHeading">
+        <h3>{item.role}</h3>
+        <p className="cyan">{item.company}</p>
+        <small>{item.period}</small>
+        <p className="roleFocus">{item.focus}</p>
+      </div>
+      <div>
+        <b className="blockLabel">KEY CONTRIBUTIONS</b>
+        <ul className="achievementList">
+          {item.highlights.map((highlight) => (
+            <li key={highlight}>{highlight}</li>
+          ))}
+        </ul>
+        <div className="resultLine">
+          <b>Outcome</b>
+          <p>{item.outcome}</p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function InternshipCard({ item }) {
+  return (
+    <article className="card">
+      <small>{item.period}</small>
+      <h3>{item.role}</h3>
+      <p className="cyan">{item.company}</p>
+      <ul className="compactList">
+        {item.highlights.map((point) => (
+          <li key={point}>{point}</li>
+        ))}
+      </ul>
+      {item.note && <p className="metricNote">{item.note}</p>}
+    </article>
+  );
+}
+
+function ProjectControls({ query, setQuery, categories, active, setActive }) {
+  return (
+    <div className="controls">
+      <label>
+        <Search />
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search projects or technologies..."
+        />
+      </label>
+      <div>
+        {categories.map((value) => (
+          <button
+            key={value}
+            className={active === value ? 'on' : ''}
+            onClick={() => setActive(value)}
+          >
+            {value}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProjectCard({ project }) {
+  return (
+    <article className="project">
+      <div className="projectHead">
+        <div>
+          <h3>{project.title}</h3>
+          <p className="cyan">{project.subtitle}</p>
+        </div>
+        {project.github && (
+          <a
+            className="btn"
+            href={project.github}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Code2 /> Source Code
+          </a>
+        )}
+      </div>
+      <div className="projectBody">
+        <div>
+          <StoryBlock label="SITUATION">{project.situation}</StoryBlock>
+          <StoryBlock label="TASK">{project.task}</StoryBlock>
+          <div className="block">
+            <b>ACTION</b>
+            <ul className="compactList">
+              {project.actions.map((action) => (
+                <li key={action}>{action}</li>
+              ))}
+            </ul>
+          </div>
+          <StoryBlock label="RESULT">{project.result}</StoryBlock>
+          {project.future?.length > 0 && (
+            <div className="futureBlock">
+              <b>FUTURE ENHANCEMENTS</b>
+              <ul className="compactList">
+                {project.future.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        {(project.images?.length > 0 || project.video) && (
+          <div className="projectMedia">
+            {project.images?.map((image) => (
+              <img
+                key={image}
+                src={assetUrl(image)}
+                alt={`${project.title} screenshot`}
+                loading="lazy"
+              />
+            ))}
+            {project.video && (
+              project.video.startsWith('project-videos/') ? (
+                <video controls preload="metadata" src={assetUrl(project.video)} />
+              ) : (
+                <a
+                  className="btn"
+                  href={project.video}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Play size={16} /> Watch project demo
+                </a>
+              )
+            )}
+          </div>
+        )}
+      </div>
+      <div className="projectTags">
+        {project.tags.map((tag) => (
+          <span className="tag" key={tag}>{tag}</span>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function StoryBlock({ label, children }) {
+  return (
+    <div className="block">
+      <b>{label}</b>
+      <p>{children}</p>
+    </div>
+  );
+}
+
+function CredentialCard({ credential }) {
+  return (
+    <article className="credential">
+      {credential.image ? (
+        <img src={assetUrl(credential.image)} alt={credential.title} />
+      ) : (
+        <div className="certImg">
+          <Award />
+          <span>Achievement image to be added</span>
+        </div>
+      )}
+      <div>
+        <small>Recognition</small>
+        <h3>{credential.title}</h3>
+        <p>{credential.issuer}</p>
+        {credential.url && (
+          <a href={credential.url} target="_blank" rel="noreferrer">
+            View credential <ExternalLink size={14} />
+          </a>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function ResourceCard({ resource }) {
+  const href = resource.url.startsWith('http')
+    ? resource.url
+    : assetUrl(resource.url);
+  return (
+    <article className="card">
+      <h3>{resource.title}</h3>
+      <p>{resource.description}</p>
+      <a
+        className="btn primary"
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        download={resource.downloadable || undefined}
+      >
+        {resource.downloadable ? 'Download' : 'Open resource'}
+      </a>
+    </article>
+  );
+}
